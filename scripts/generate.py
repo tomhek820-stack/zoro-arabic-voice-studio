@@ -72,10 +72,9 @@ def main() -> int:
     print(f"[INFO] Device: {device}")
     print(f"[INFO] Text chunks: {len(chunks)}")
     print("[INFO] Loading Chatterbox Multilingual V3...")
-    model = ChatterboxMultilingualTTS.from_pretrained(
-        device=device,
-        t3_model="v3",
-    )
+    # The published chatterbox-tts 0.1.7 API accepts the device only.
+    # Multilingual TTS is already selected by this class; no t3_model argument.
+    model = ChatterboxMultilingualTTS.from_pretrained(device=device)
 
     use_reference = args.reference.is_file()
     if use_reference:
