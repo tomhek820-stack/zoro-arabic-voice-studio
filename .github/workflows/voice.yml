@@ -1,0 +1,68 @@
+name: Generate Arabic Narration
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "scripts/story.txt"
+      - "scripts/generate.py"
+      - ".github/workflows/voice.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: arabic-voice-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    # Public repositories receive free standard GitHub-hosted runner usage.
+    # This is CPU-only: GitHub's standard hosted runners do not provide a GPU.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install system audio tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+
+      - name: Install Chatterbox
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install chatterbox-tts
+
+      - name: Generate WAV and MP3
+        env:
+          HF_HOME: ${{ runner.temp }}/hf-cache
+          TOKENIZERS_PARALLELISM: "false"
+          OMP_NUM_THREADS: "4"
+          MKL_NUM_THREADS: "4"
+        run: |
+          mkdir -p output
+          python scripts/generate.py
+
+      - name: Verify audio outputs
+        run: |
+          test -s output/narration.wav
+          test -s output/narration.mp3
+          ffprobe -v error -show_entries format=duration             -of default=noprint_wrappers=1:nokey=1 output/narration.mp3
+
+      - name: Upload generated audio
+        uses: actions/upload-artifact@v4
+        with:
+          name: arabic-narration-wav-mp3
+          path: |
+            output/narration.wav
+            output/narration.mp3
+          if-no-files-found: error
+          retention-days: 7

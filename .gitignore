@@ -1,0 +1,7 @@
+__pycache__/
+*.py[cod]
+.venv/
+assets/*.wav
+assets/*.mp3
+output/*
+!output/.gitkeep
