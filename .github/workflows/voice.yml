@@ -41,7 +41,7 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install edge-tts
           python -m pip check
-          edge-tts --version
+          python -c "from importlib.metadata import version; print('edge-tts', version('edge-tts'))"
 
       - name: Validate source and generator
         run: |
