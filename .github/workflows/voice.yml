@@ -44,12 +44,10 @@ jobs:
 
       - name: Install Chatterbox
         run: |
-          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install --upgrade pip wheel
+          # Perth 1.0.1 imports pkg_resources; setuptools 81+ removed it.
+          python -m pip install "setuptools==80.9.0"
           python -m pip install chatterbox-tts
-          # PyPI's resemble-perth 1.0.1 can silently disable the watermark
-          # import on newer setuptools. Install the upstream fixed source
-          # revision instead of replacing the watermark with a no-op.
-          python -m pip install --no-deps "git+https://github.com/resemble-ai/Perth.git@447e5ddd228797b6b6af5e16a9698cb10fc73e7b"
           python -m pip check
           python - <<'PY'
           import traceback
