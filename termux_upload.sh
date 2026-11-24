@@ -40,7 +40,7 @@ if gh repo view "$OWNER/$REPO_NAME" >/dev/null 2>&1; then
   git push -u origin main
 else
   gh repo create "$OWNER/$REPO_NAME" --public --source=. --remote=origin --push \
-    --description "Free Arabic narration generation with Chatterbox Multilingual V3"
+    --description "Free Arabic narration with Microsoft Edge TTS (no API key)"
 fi
 
 echo
