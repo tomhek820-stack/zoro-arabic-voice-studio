@@ -13,7 +13,7 @@ permissions:
 
 concurrency:
   group: arabic-voice-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   generate:
