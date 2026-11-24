@@ -49,15 +49,18 @@ jobs:
           # PyPI's resemble-perth 1.0.1 can silently disable the watermark
           # import on newer setuptools. Install the upstream fixed source
           # revision instead of replacing the watermark with a no-op.
-          python -m pip install --no-deps "git+https://github.com/resemble-ai/Perth.git@447e5dd"
+          python -m pip install --no-deps "git+https://github.com/resemble-ai/Perth.git@447e5ddd228797b6b6af5e16a9698cb10fc73e7b"
           python -m pip check
           python - <<'PY'
-          import perth
-          assert callable(perth.PerthImplicitWatermarker), (
-              "Perth watermark backend failed to import; refusing to generate "
-              "audio without the expected provenance watermark."
-          )
-          print("Perth watermark backend: OK")
+          import traceback
+          try:
+              from perth.perth_net.perth_net_implicit.perth_watermarker import PerthImplicitWatermarker
+              assert callable(PerthImplicitWatermarker)
+              print("Perth neural watermark backend: OK")
+          except BaseException:
+              print("Perth neural watermark import failed; full underlying traceback:")
+              traceback.print_exc()
+              raise
           PY
 
       - name: Generate WAV and MP3
